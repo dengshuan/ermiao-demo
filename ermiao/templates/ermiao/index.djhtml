@@ -1,0 +1,69 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{% static 'ermiao/css/bootstrap.min.css' %}" type="text/css" media="screen" />
+    <script type="text/javascript" src="{% static 'ermiao/js/bootstrap.min.js' %}"></script>
+    <title>ermiao demo</title>
+  </head>
+
+  <body>
+    <div class="header">
+      {% if user.is_authenticated %}
+	欢迎{{ user.username }}! 拥有{{ user.account.pets }}个宠物
+	<a href="{% url 'ermiao:logout' %}">Logout</a>
+      {% else %}
+	<form method="post" id="login" action="{% url 'ermiao:login' %}">
+	  {% csrf_token %}
+	  <input type="text" name="username" value="" />
+	  <input type="password" name="password" value="" />
+	  <input type="submit" name="submit" value="Login" />
+	</form>
+      {% endif %}
+    </div>
+
+    
+    {% if user.is_authenticated %}
+      <div class="container">
+	<form method="post" id="add" action="topic">
+	  {% csrf_token %}
+	  <input type="textarea" name="content" value="" />
+	  <input type="text" class="hidden" name="username" value="{{ user.username }}" />
+	  <input type="submit" name="submit" value="发布" />
+	</form>
+      </div>
+    {% endif %}
+
+
+
+    <div class="container">
+      {% if object_list %}
+	{% for item in object_list %}
+	  <div class="panel panel-default">
+	    <div class="panel-heading">
+	      <div class="panel-title">
+
+	      </div>
+	    </div>
+	    <div class="panel-body">
+	      <p>{{ item.content }}</p>
+	      <a href="#">喜欢</a>{{ item.likes }}
+	      {% if user.is_authenticated %}
+		<form method="post" id="comments" action="{% url 'ermiao:comment' %}">
+		  {% csrf_token %}
+		  <input type="textarea" name="content" value="" />
+		  <input type="text" class="hidden" name="username" value="{{ user.username }}" />
+		  <input type="text" class="hidden" name="topic" value="{{ item.id }}" />
+		  <input type="submit" name="submit" value="留言" />
+		</form>
+	      {% endif %}
+	    </div>
+	  </div>
+	{% endfor %}
+
+      {% else %}
+	Oops, no topic created yet.
+      {% endif %}
+    </div>
+  </body>
+</html>
