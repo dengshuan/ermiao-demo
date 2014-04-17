@@ -29,7 +29,10 @@ def create_topic(days=0, hours=0):
 def create_comment(days=0, hours=0):
     account = random.choice(Account.objects.all())
     topic = random.choice(Topic.objects.all())
-    created = timezone.now() - datetime.timedelta(days=days, hours=hours)
+    # comment created must be after topic created
+    start = topic.created
+    created = start + datetime.timedelta(days=days, hours=hours)
+    created = min(timezone.now(), created)
     content = 'Comment created by {} on {}'.format(account, created)
     comment = Comment(account=account, topic=topic, content=content, created=created)
     comment.save()
