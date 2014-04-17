@@ -46,6 +46,15 @@ class IndexView(ListView):
                 candidates2.remove(r)
 
         to_be_shown = top100 + random15
+
+        def last_operated(item):
+            t1 = item.account.user.last_login
+            if item.comment_set.order_by('created'):
+                t2 = item.comment_set.order_by('created').last.created
+            else:
+                t2 = item.created
+            return max(t1, t2)
+
         return to_be_shown
         # return Topic.objects.order_by('created')[:5]
 
