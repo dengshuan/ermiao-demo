@@ -2,7 +2,7 @@
 #-*- coding:utf-8 -*-
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'demo.settings')
-from ermiao.models import Account, Topic, Comment, User
+from ermiao.models import Account, Topic, Comment, Like, User
 from django.utils import timezone
 import datetime, random
 
@@ -33,6 +33,12 @@ def create_comment(days=0, hours=0):
     content = 'Comment created by {} on {}'.format(account, created)
     comment = Comment(account=account, topic=topic, content=content, created=created)
     comment.save()
+
+def create_like():
+    topic = random.choice(Topic.objects.all())
+    account = random.choice(Account.objects.all())
+    like = Like(topic=topic, account=account)
+    like.save()
 
 def time_generator(days=5):
     return random.randrange(days), random.randrange(24)

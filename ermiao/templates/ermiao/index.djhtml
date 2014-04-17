@@ -47,7 +47,10 @@
 	    </div>
 	    <div class="panel-body">
 	      <p>{{ item.content }}</p>
-	      <a href="#">喜欢</a>{{ item.likes }}
+	      <a href="#">喜欢</a>{{ item.like_set.count }}
+	      {% for comment in item.comment_set.all %}
+		<p>{{ comment }}</p>
+	      {% endfor %}
 	      {% if user.is_authenticated %}
 		<form method="post" id="comments" action="{% url 'ermiao:comment' %}">
 		  {% csrf_token %}

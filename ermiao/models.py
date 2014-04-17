@@ -33,3 +33,7 @@ class Comment(models.Model):
 
     def __unicode__(self):
         return self.content
+
+class Like(models.Model):
+    topic = models.ForeignKey(Topic)
+    account = models.ForeignKey(Account)
