@@ -10,7 +10,7 @@ from .models import Account, Topic, Comment
 # Create your views here.
 class IndexView(ListView):
     template_name = 'ermiao/index.djhtml'
-    def get_queryset(self):
+    def get_latest_topics(self):
         topics = Topic.objects.all()
         latest = [t for t in topics if t.was_published_recently()]
         outdated = [t for t in topics if not t.was_published_recently()]
@@ -34,7 +34,7 @@ class IndexView(ListView):
             for c in candidate.comment_set.all():
                 if c.was_published_recently():
                     candidate.latest_comments += 1
-            if candidate.likes > 2 and candidate.latest_comments > 1:
+            if candidate.like_set.count > 2 and candidate.latest_comments > 1:
                 candidates2.append(candidate)
         random15 = []
         if len(candidates2) <= 15:
@@ -46,17 +46,23 @@ class IndexView(ListView):
                 candidates2.remove(r)
 
         to_be_shown = top100 + random15
-
-        def last_operated(item):
-            t1 = item.account.user.last_login
-            if item.comment_set.order_by('created'):
-                t2 = item.comment_set.order_by('created').last.created
-            else:
-                t2 = item.created
-            return max(t1, t2)
-
         return to_be_shown
-        # return Topic.objects.order_by('created')[:5]
+
+    def last_operated(self, item):
+        t1 = item.account.user.last_login
+        if item.comment_set.all():
+            t2 = item.comment_set.latest('created').created
+        else:                   # topic has no comments
+            t2 = item.created
+        return max(t1, t2)
+
+    def get_queryset(self):
+        items = self.get_latest_topics()
+        for item in items:
+            item.last_operated = self.last_operated(item)
+        items = sorted(items, key=lambda item: item.last_operated, reverse=True)
+        return items
+
 
 def create_topic(request):
     if request.method == 'POST':

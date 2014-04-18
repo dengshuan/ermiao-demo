@@ -16,7 +16,7 @@ class Topic(models.Model):
     likes = models.IntegerField(default=0)
 
     def was_published_recently(self):
-        return self.created >= timezone.now() - datetime.timedelta(days=1)
+        return self.created <= timezone.now() - datetime.timedelta(days=1)
 
     def __unicode__(self):
         return self.content
@@ -29,7 +29,7 @@ class Comment(models.Model):
     created = models.DateTimeField()
 
     def was_published_recently(self):
-        return self.created >= timezone.now() - datetime.timedelta(days=1)    
+        return self.created <= timezone.now() - datetime.timedelta(days=1)    
 
     def __unicode__(self):
         return self.content
