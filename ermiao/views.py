@@ -58,7 +58,7 @@ class IndexView(ListView):
             t3 = item.like_set.latest('clicked').clicked
         else:
             t3 = item.created
-        return max(t1, t2)
+        return max(t1, t2, t3)
 
     def get_queryset(self):
         items = self.get_latest_topics()
@@ -98,7 +98,8 @@ def tag_like(request):
         topic_id = request.POST['topic']
         account = Account.objects.get(user__username=username)
         topic = Topic.objects.get(pk=topic_id)
-        like = Like(account=account, topic=topic)
+        clicked = timezone.now()
+        like = Like(account=account, topic=topic, clicked=clicked)
         like.save()
         return redirect(reverse('ermiao:index'))
     return redirect(reverse('ermiao:index'))
