@@ -1,1 +1,6 @@
 * A timeline demo for [[http://ermiao.com][ermiao]]
+** Usage
+   1. Create database by =python manage.py syncdb=
+   2. Generate testing data by =python generator.py=
+   3. Run server by =python manage.py runserver=
+   4. Test this demo with your browser http://localhost:8000/ermiao
