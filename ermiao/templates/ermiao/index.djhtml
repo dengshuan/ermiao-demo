@@ -10,66 +10,74 @@
   <body>
     <div class="header">
       {% if user.is_authenticated %}
-	欢迎{{ user.username }}! 拥有{{ user.account.pets }}个宠物
-	<a href="{% url 'ermiao:logout' %}">Logout</a>
+	欢迎{{ user.username }}！{{ user.account.pets }}个小宠物 <br />
+	<a href="{% url 'ermiao:logout' %}">离开</a>
       {% else %}
-	<form method="post" id="login" action="{% url 'ermiao:login' %}">
+	<form method="post" id="login" action="{% url 'ermiao:login' %}" class="input-group">
 	  {% csrf_token %}
-	  <input type="text" name="username" value="" />
-	  <input type="password" name="password" value="" />
-	  <input type="submit" name="submit" value="Login" />
+	  <input type="text" class="form-control" name="username" value="" placeholder="用户名"/>
+	  <input type="password" class="form-control" name="password" value="" placeholder="密码"/>
+	  <button type="submit" class="btn btn-default" name="submit">登录</button>
 	</form>
       {% endif %}
     </div>
 
-    
     {% if user.is_authenticated %}
       <div class="container">
-	<form method="post" id="add" action="topic">
+	<form method="post" id="add" action="topic" class="input-group">
 	  {% csrf_token %}
-	  <input type="textarea" name="content" value="" />
+	  <input type="textarea" class="form-control" name="content" value="" placeholder="来一发"/>
 	  <input type="text" class="hidden" name="username" value="{{ user.username }}" />
-	  <input type="submit" name="submit" value="发布" />
+	  <span class="input-group-btn">
+	    <button type="submit" class="btn btn-default" name="submit">发布</button>
+	  </span>
 	</form>
       </div>
     {% endif %}
 
 
-
     <div class="container">
       {% if object_list %}
 	{% for item in object_list %}
-	  <div class="panel panel-default">
+	  <div class="panel panel-info">
 	    <div class="panel-heading">
 	      <div class="panel-title">
-		{% if user.is_authenticated %}
-		  <form method="post" id="likes" action="{% url 'ermiao:like' %}">
-		    {% csrf_token %}
-		    <input type="text" class="hidden" name="username" value="{{ user.username }}" />
-		    <input type="text" class="hidden" name="topic" value="{{ item.id }}" />
-		    <input type="submit" name="submit" value="喜欢" />
-		  </form>
-		  {{ item.like_set.count }}
-		{% else %}
-		  喜欢{{ item.like_set.count }}
-		{% endif %}
+		{{ item.like_set.count }}<span class="glyphicon glyphicon-heart"></span>
 	      </div>
 	    </div>
 	    <div class="panel-body">
 	      <p>{{ item.content }}</p>
-	      {% for comment in item.comment_set.all %}
-		<p>{{ comment }}</p>
-	      {% endfor %}
+	      <ul class="list-group">
+		{% for comment in item.comment_set.all %}
+		  <li class="list-group-item">{{ comment }}</li>
+		{% endfor %}
+	      </ul>
 	      {% if user.is_authenticated %}
-		<form method="post" id="comments" action="{% url 'ermiao:comment' %}">
+		<form method="post" id="comments" action="{% url 'ermiao:comment' %}" class="input-group">
 		  {% csrf_token %}
-		  <input type="textarea" name="content" value="" />
+		  <input type="textarea" class="form-control" name="content" value="" placeholder="说两句" />
 		  <input type="text" class="hidden" name="username" value="{{ user.username }}" />
 		  <input type="text" class="hidden" name="topic" value="{{ item.id }}" />
-		  <input type="submit" name="submit" value="留言" />
+		  <span class="input-group-btn">
+		    <button type="submit" class="btn btn-default" name="submit">留言</button>
+		  </span>
 		</form>
 	      {% endif %}
 	    </div>
+	    {% if user.is_authenticated %}
+	      <div class="panel-footer">
+		<form method="post" id="likes" action="{% url 'ermiao:like' %}">
+		  {% csrf_token %}
+		  <input type="text" class="hidden" name="username" value="{{ user.username }}" />
+		  <input type="text" class="hidden" name="topic" value="{{ item.id }}" />
+		  <span class=input-group-btn">
+		    <button type="submit" class="btn btn-default">
+		      <span class="glyphicon glyphicon-thumbs-up"></span>
+		    </button>
+		  </span>
+		</form>
+	      </div>
+	    {% endif %}
 	  </div>
 	{% endfor %}
 
