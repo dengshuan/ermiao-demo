@@ -7,4 +7,5 @@ urlpatterns = patterns('',
                        url(r'^$', views.IndexView.as_view(), name='index'),
                        url(r'^comment$', views.add_comment, name='comment'),
                        url(r'^topic$', views.create_topic, name='topic'),
+                       url(r'^like$', views.tag_like, name='like'),
                    )

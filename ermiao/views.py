@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 import random, datetime
-from .models import Account, Topic, Comment
+from .models import Account, Topic, Comment, Like
 
 # Create your views here.
 class IndexView(ListView):
@@ -16,7 +16,7 @@ class IndexView(ListView):
         outdated = [t for t in topics if not t.was_published_recently()]
         for item in latest:
             item.weight = 0
-            if item.likes > 0:
+            if item.like_set.count > 0:
                 item.weight = item.weight + 1.0
             for comment in item.comment_set.all():
                 if comment.account.pets > 0:
@@ -54,6 +54,10 @@ class IndexView(ListView):
             t2 = item.comment_set.latest('created').created
         else:                   # topic has no comments
             t2 = item.created
+        if item.like_set.all():
+            t3 = item.like_set.latest('clicked').clicked
+        else:
+            t3 = item.created
         return max(t1, t2)
 
     def get_queryset(self):
@@ -85,6 +89,17 @@ def add_comment(request):
         created = timezone.now()
         c = Comment(account=account, topic=topic, content=content, created=created)
         c.save()
+        return redirect(reverse('ermiao:index'))
+    return redirect(reverse('ermiao:index'))
+
+def tag_like(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        topic_id = request.POST['topic']
+        account = Account.objects.get(user__username=username)
+        topic = Topic.objects.get(pk=topic_id)
+        like = Like(account=account, topic=topic)
+        like.save()
         return redirect(reverse('ermiao:index'))
     return redirect(reverse('ermiao:index'))
 

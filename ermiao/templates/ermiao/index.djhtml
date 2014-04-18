@@ -42,16 +42,21 @@
 	  <div class="panel panel-default">
 	    <div class="panel-heading">
 	      <div class="panel-title">
-
+		{% if user.is_authenticated %}
+		  <form method="post" id="likes" action="{% url 'ermiao:like' %}">
+		    {% csrf_token %}
+		    <input type="text" class="hidden" name="username" value="{{ user.username }}" />
+		    <input type="text" class="hidden" name="topic" value="{{ item.id }}" />
+		    <input type="submit" name="submit" value="喜欢" />
+		  </form>
+		  {{ item.like_set.count }}
+		{% else %}
+		  喜欢{{ item.like_set.count }}
+		{% endif %}
 	      </div>
 	    </div>
 	    <div class="panel-body">
 	      <p>{{ item.content }}</p>
-	      {% if user.is_authenticated %}
-		<a href="#">喜欢</a>{{ item.like_set.count }}
-	      {% else %}
-		喜欢{{ item.like_set.count }}
-	      {% endif %}
 	      {% for comment in item.comment_set.all %}
 		<p>{{ comment }}</p>
 	      {% endfor %}

@@ -13,7 +13,7 @@ class Topic(models.Model):
     account = models.ForeignKey(Account)
     content = models.CharField(max_length=200)
     created = models.DateTimeField()
-    likes = models.IntegerField(default=0)
+    # likes = models.IntegerField(default=0)
 
     def was_published_recently(self):
         return self.created <= timezone.now() - datetime.timedelta(days=1)
@@ -37,3 +37,4 @@ class Comment(models.Model):
 class Like(models.Model):
     topic = models.ForeignKey(Topic)
     account = models.ForeignKey(Account)
+    clicked = models.DateTimeField()
