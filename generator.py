@@ -49,5 +49,14 @@ def time_generator(days=5):
     return random.randrange(days), random.randrange(24)
 
 if __name__ == '__main__':
+    print "I will generate test data, please take a while..."
     create_user()
     create_account()
+    for i in range(500):
+        create_topic(*time_generator())
+    for i in range(500):
+        create_comment(*time_generator())
+    for i in range(500):
+        create_like(*time_generator())
+    print """Great! Test data generated successfully,
+    You can test this demo with your browser"""
