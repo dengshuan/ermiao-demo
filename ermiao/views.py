@@ -74,7 +74,7 @@ def create_topic(request):
         content = request.POST['content']
         account = Account.objects.get(user__username=username)
         created = timezone.now()
-        t = Topic(account=account, content=content, created=created, likes=0)
+        t = Topic(account=account, content=content, created=created)
         t.save()
         return redirect(reverse('ermiao:index'))
     return redirect(reverse('ermiao:index'))
