@@ -20,10 +20,9 @@ def create_account():
 
 def create_topic(days=0, hours=0):
     account = random.choice(Account.objects.all())
-    likes = random.randrange(100)
     created = timezone.now() - datetime.timedelta(days=days, hours=hours)
     content = 'Topic created by {} on {}'.format(account, created)
-    topic = Topic(account=account, content=content, created=created, likes=likes)
+    topic = Topic(account=account, content=content, created=created)
     topic.save()
 
 def create_comment(days=0, hours=0):
@@ -37,10 +36,13 @@ def create_comment(days=0, hours=0):
     comment = Comment(account=account, topic=topic, content=content, created=created)
     comment.save()
 
-def create_like():
+def create_like(days=0, hours=0):
     topic = random.choice(Topic.objects.all())
     account = random.choice(Account.objects.all())
-    like = Like(topic=topic, account=account)
+    start = topic.created
+    clicked = start + datetime.timedelta(days=days, hours=hours)
+    clicked = min(timezone.now(), clicked)
+    like = Like(topic=topic, account=account, clicked=clicked)
     like.save()
 
 def time_generator(days=5):
